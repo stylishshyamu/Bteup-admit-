@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTEUP Admit Card 2025</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; text-align: center; margin:0; padding:0; }
+    .card { margin: 40px auto; background: white; border-radius: 15px; padding: 25px; width: 90%; max-width: 400px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
+    input { width: 90%; padding: 10px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; margin-bottom:15px; }
+    button { background-color: royalblue; color:white; border:none; padding:10px 20px; font-size:16px; border-radius:8px; }
+    button:hover { background-color: dodgerblue; }
+    h2 { color: darkblue; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🎓 BTEUP Admit Card 2025</h2>
+  <p>अपना Enrollment Number दर्ज करें 👇</p>
+  <input type="text" id="enroll" placeholder="जैसे E233123456">
+  <br>
+  <button onclick="openAdmitCard()">Download Admit Card</button>
+</div>
+
+<script>
+function openAdmitCard() {
+  const en = document.getElementById('enroll').value.trim();
+  if(en === "") {
+    alert("कृपया Enrollment Number दर्ज करें!");
+  } else {
+    // Admit card page pe enrollment number bhejenge
+    window.location.href = "admitcard.html?en=" + en;
+  }
+}
+</script>
+
+</body>
+</html>
