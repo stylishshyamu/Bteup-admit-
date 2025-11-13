@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTEUP Admit Card</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .card {
+      margin: 40px auto;
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    h2 { color: darkblue; }
+    p { font-size: 16px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🎓 BTEUP Admit Card 2025</h2>
+  <p id="enrollNumber"></p>
+  <p>नाम: Shyamu Pandey</p>
+  <p>Branch: Electronics Engineering</p>
+  <p>Exam Center: Ayodhya</p>
+</div>
+
+<script>
+  // URL se enrollment number read karna
+  const params = new URLSearchParams(window.location.search);
+  const en = params.get('en');
+  if(en){
+    document.getElementById('enrollNumber').innerText = "Enrollment Number: " + en;
+  } else {
+    document.getElementById('enrollNumber').innerText = "Enrollment Number नहीं मिला!";
+  }
+</script>
+
+</body>
+  </html>
