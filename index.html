@@ -1,123 +1,76 @@
-# requirements:
-# pip install selenium webdriver-manager
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTEUP Admit Card 2025 - Shyamu Pandey</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-import time
-import os
+    .card {
+      margin: 40px auto;
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
 
-# --- USER INPUT (yahan apna enrollment aur dob daalen) ---
-ENROLLMENT = "YOUR_ENROLLMENT_NUMBER"
-DOB = "DD-MM-YYYY"   # ya site jo format maangti ho (example: 01-01-2004)
+    input {
+      width: 90%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
 
-# --- setup chrome (headless optional) ---
-options = webdriver.ChromeOptions()
-# Agar browser visible chahiye to comment out next line:
-options.add_argument("--headless=new")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
+    button {
+      background-color: royalblue;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    button:hover {
+      background-color: dodgerblue;
+    }
 
-try:
-    # BTEUP student login / admit card page (official site)
-    url = "https://bteup.ac.in/Eseva/Outerpages/StudentLogin.aspx"
-    driver.get(url)
-    time.sleep(2)  # page load
+    h2 {
+      color: darkblue;
+    }
+  </style>
+</head>
+<body>
 
-    # --- IMPORTANT ---
-    # Har site ka HTML alag ho sakta hai. Neeche diye selectors ko agar required ho to
-    # browser me Inspect karke update kar lijiyega (id/name/placeholder dekh kar).
+  <div class="card">
+    <h2>🎓 BTEUP Admit Card 2025</h2>
+    <p>अपना Enrollment Number दर्ज करें 👇</p>
+    <input type="text" id="enroll" placeholder="जैसे E233123456">
+    <br>
+    <button onclick="openAdmitCard()">Download Admit Card</button>
+  </div>
 
-    # Example attempts (common patterns). Agar ye find na kare to aapko real page ka element attribute dekhna hoga.
-    # 1) Enrollment input
-    try:
-        enroll_input = driver.find_element(By.ID, "txtEnrollment")    # example id
-    except:
-        try:
-            enroll_input = driver.find_element(By.NAME, "EnrollmentNo")
-        except:
-            enroll_input = driver.find_element(By.XPATH, "//input[contains(@placeholder,'Enrollment') or contains(@id,'enroll') or contains(@name,'enroll')]")
+  <script>
+    function openAdmitCard() {
+      const en = document.getElementById('enroll').value.trim();
+      if(en === "") {
+        alert("कृपया Enrollment Number दर्ज करें!");
+      } else {
+        // Ye line agle page (admitcard.html) par le jayegi
+        window.location.href = "admitcard.html?en=" + en;
+      }
+    }
+  </script>
 
-    # 2) DOB input
-    try:
-        dob_input = driver.find_element(By.ID, "txtDOB")
-    except:
-        try:
-            dob_input = driver.find_element(By.NAME, "DOB")
-        except:
-            dob_input = driver.find_element(By.XPATH, "//input[contains(@placeholder,'DOB') or contains(@id,'dob') or contains(@name,'dob') or contains(@placeholder,'Date')]")
-
-    # Fill fields
-    enroll_input.clear()
-    enroll_input.send_keys(ENROLLMENT)
-    dob_input.clear()
-    dob_input.send_keys(DOB)
-
-    # 3) Submit / Show Admit Card button
-    try:
-        submit_btn = driver.find_element(By.ID, "btnShow")   # example id
-    except:
-        try:
-            submit_btn = driver.find_element(By.XPATH, "//button[contains(text(),'Show') or contains(text(),'Download') or contains(text(),'Submit') or contains(@id,'btn')]")
-        except:
-            # fallback: press ENTER on last input
-            dob_input.send_keys(Keys.ENTER)
-            submit_btn = None
-
-    if submit_btn:
-        submit_btn.click()
-
-    time.sleep(3)  # wait for response
-
-    # --- Now, page may show admit card as HTML or provide a PDF link.
-    # Strategy:
-    # 1) If PDF link present, find <a href> and download via requests.
-    # 2) If admit card renders as HTML, save page as PDF (print to PDF) — selenium can't directly "save as PDF" easily,
-    #    but we can get page source or take a screenshot OR use Chrome DevTools Protocol to print to PDF if needed.
-
-    # Try to find anchor to PDF
-    pdf_link = None
-    try:
-        a_tags = driver.find_elements(By.TAG_NAME, "a")
-        for a in a_tags:
-            href = a.get_attribute("href")
-            if href and href.lower().endswith(".pdf"):
-                pdf_link = href
-                break
-    except:
-        pdf_link = None
-
-    if pdf_link:
-        # download with requests
-        import requests
-        r = requests.get(pdf_link, stream=True)
-        fname = f"admit_{ENROLLMENT}.pdf"
-        with open(fname, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-        print("Downloaded admit card to:", os.path.abspath(fname))
-    else:
-        # No direct PDF link found.
-        # Option A: save page HTML
-        html = driver.page_source
-        fname = f"admit_{ENROLLMENT}.html"
-        with open(fname, "w", encoding="utf-8") as f:
-            f.write(html)
-        print("Admit card page saved as HTML:", os.path.abspath(fname))
-
-        # Option B: take screenshot of admit card area / full page
-        screenshot = f"admit_{ENROLLMENT}.png"
-        # maximise then screenshot
-        driver.maximize_window()
-        time.sleep(1)
-        driver.save_screenshot(screenshot)
-        print("Full page screenshot saved:", os.path.abspath(screenshot))
-
-    # Extra: if you want a true PDF, you can use Chrome DevTools "printToPDF" via CDP (advanced).
-finally:
-    driver.quit()
+</body>
+</html>
